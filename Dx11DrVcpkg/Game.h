@@ -1,4 +1,4 @@
-//
+﻿//
 // Game.h
 //
 
@@ -6,6 +6,7 @@
 
 #include "DeviceResources.h"
 #include "StepTimer.h"
+
 
 #include <memory>
 
@@ -45,7 +46,7 @@ public:
     void OnWindowSizeChanged(int width, int height);
 
     // Properties
-    void GetDefaultSize( int& width, int& height ) const noexcept;
+    void GetDefaultSize(int& width, int& height) const noexcept;
 
 private:
 
@@ -62,7 +63,15 @@ private:
 
     // Rendering loop timer.
     DX::StepTimer                           m_timer;
-    
+
     // Xbox One XDK 를 사용하는 경우, 빡센 메모리 관리를 위해 필수.
     std::unique_ptr<DirectX::GraphicsMemory> m_graphicsMemory;
+
+    DirectX::SimpleMath::Vector2 m_screenPos;
+
+    DirectX::SimpleMath::Vector2 m_origin;
+
+    std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch; // 스프라이트 배출기 (2D 그리기 도구)
+
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texture; // 텍스쳐 리소스 뷰 (이미지 데이터)
 };

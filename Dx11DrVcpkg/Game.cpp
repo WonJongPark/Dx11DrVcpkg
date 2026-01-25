@@ -1,9 +1,10 @@
-//
+﻿//
 // Game.cpp
 //
 
 #include "pch.h"
 #include "Game.h"
+
 
 extern void ExitGame() noexcept;
 
@@ -45,9 +46,9 @@ void Game::Initialize(HWND window, int width, int height)
 void Game::Tick()
 {
     m_timer.Tick([&]()
-    {
-        Update(m_timer);
-    });
+        {
+            Update(m_timer);
+        });
 
     Render();
 }
@@ -77,8 +78,22 @@ void Game::Render()
     m_deviceResources->PIXBeginEvent(L"Render");
     auto context = m_deviceResources->GetD3DDeviceContext();
 
-    // TODO: Add your rendering code here.
-    context;
+    // 3. 이미지 그리기 시작
+    // SpriteBatch는 내부적으로 VS, PS, IA 단계를 자동으로 설정해준다.
+    m_spriteBatch->Begin();
+
+    // 중심점을 기준으로 그리기
+    m_spriteBatch->Draw(m_texture.Get(),
+        m_screenPos, // 화면상 위치
+        nullptr,     // 소스 사각형 (전체 그리기)
+        Colors::White,
+        0.f,        // 회전 각도 m_rotation 등으로 지정
+        m_origin,   // 회전의 중심축
+        0.5f        // 스케일
+    );
+
+    m_spriteBatch->End();
+
 
     m_deviceResources->PIXEndEvent();
 
@@ -168,21 +183,83 @@ void Game::GetDefaultSize(int& width, int& height) const noexcept
 void Game::CreateDeviceDependentResources()
 {
     auto device = m_deviceResources->GetD3DDevice();
-    m_graphicsMemory = std::make_unique<GraphicsMemory>(device);
+    auto context = m_deviceResources->GetD3DDeviceContext(); // SpriteBatch 생성시 필요
     
-    // TODO: Initialize device dependent objects here (independent of window size).
-    device;
+
+    // 1. SpriteBatch 초기화
+    m_graphicsMemory = std::make_unique<GraphicsMemory>(device); // GPU 업로드 버퍼 관리
+    m_spriteBatch = std::make_unique<DirectX::SpriteBatch>(context);
+
+    // 2. 텍스처 로드 (PNG 파일 -> GPU 리소스)
+    // 파일명이 정확해야 하며, 실행 파일 경로에 있어야 함
+    ComPtr<ID3D11Resource> resource;
+    //DX::ThrowIfFailed( // 헬퍼 함수 사용. 예외 기반.
+    //    CreateWICTextureFromFile(device, L"scarecrow.png",
+    //    resource.GetAddressOf(), // 실제 리소스(Texture2D)를 받음
+    //    m_texture.ReleaseAndGetAddressOf()) // SRV(Shader Resource View)를 받음
+    //); // ID3D11Resource를 먼저 얻고 GetDesc()를 호출
+
+    /*HRESULT hr = DirectX::CreateWICTextureFromFile(
+        device,
+        L"scarecrow.png",
+        nullptr,
+        m_texture.ReleaseAndGetAddressOf()
+    );*/ // ID3D11ShaderResourceView만 얻음. 내부 리소스에 직접 접근 X
+
+    HRESULT hr = CreateWICTextureFromFile(
+        device,
+        L"scarecrow.png",
+        resource.GetAddressOf(),
+        m_texture.ReleaseAndGetAddressOf()
+    ); // FALID(hr) 매크로와 if문 사용. 반환값(Return Code) 기반.
+
+    if (FAILED(hr))
+    { // 에러 핸들링 : 로그 출력 후 예외 던지기
+        OutputDebugStringA("Error: Failed to load texture 'scarecrow.png'\n");
+        throw std::exception("Texture Load Failed");
+    }
+
+    // 3. 텍스처 정보(Width, Height) 추출
+    // ID3D11Resource는 범용 인터페이스므로 Texture2D로 형변환(QueryInterface/As)이 필요
+    ComPtr<ID3D11Texture2D> sprite;
+    hr = resource.As(&sprite);
+
+    if (FAILED(hr))
+    {
+        throw std::exception("Resource is Not a Texture2D");
+    }
+
+    CD3D11_TEXTURE2D_DESC spriteDesc;
+    sprite->GetDesc(&spriteDesc);
+
+    // 3. 중심점(Origin) 계산 - 회전이나 스케일링의 기준점이 됨
+    m_origin.x = float(spriteDesc.Width / 2);
+    m_origin.y = float(spriteDesc.Height / 2);
+
+    // 디버깅용 정보 출력
+    char debugMSG[64];
+    sprintf_s(debugMSG, "Texture Loaded: %d%d\n", spriteDesc.Width, spriteDesc.Height);
+    OutputDebugStringA(debugMSG);
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
 void Game::CreateWindowSizeDependentResources()
 {
     // TODO: Initialize windows-size dependent objects here.
+
+    auto size = m_deviceResources->GetOutputSize();
+    m_screenPos.x = float(size.right) / 2.f;
+    m_screenPos.y = float(size.bottom) / 2.f;
 }
 
 void Game::OnDeviceLost()
 {
     // TODO: Add Direct3D resource cleanup here.
+
+    // 리소스 해제
+    m_texture.Reset();
+    m_spriteBatch.reset();
+
     m_graphicsMemory.reset();
 }
 
