@@ -67,9 +67,9 @@ private:
     // Xbox One XDK 를 사용하는 경우, 빡센 메모리 관리를 위해 필수.
     std::unique_ptr<DirectX::GraphicsMemory> m_graphicsMemory;
 
-    DirectX::SimpleMath::Vector2 m_screenPos;
+    DirectX::SimpleMath::Vector2 m_screenPos; // 화면상 위치
 
-    DirectX::SimpleMath::Vector2 m_origin;
+    DirectX::SimpleMath::Vector2 m_origin; // 회전의 중심축
 
     std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch; // 스프라이트 배출기 (2D 그리기 도구)
 
