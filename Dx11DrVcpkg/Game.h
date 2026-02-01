@@ -1,4 +1,4 @@
-//
+﻿//
 // Game.h
 //
 
@@ -6,6 +6,8 @@
 
 #include "DeviceResources.h"
 #include "StepTimer.h"
+#include "AnimatedTexture.h" // AnimatedTexture를 위해 필요
+#include "ScrollingBackground.h"
 
 #include <memory>
 
@@ -65,4 +67,13 @@ private:
     
     // Xbox One XDK 를 사용하는 경우, 빡센 메모리 관리를 위해 필수.
     std::unique_ptr<DirectX::GraphicsMemory> m_graphicsMemory;
+
+    // 추가된 내용
+    std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
+    std::unique_ptr<AnimatedTexture> m_ship;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texture;
+    DirectX::SimpleMath::Vector2 m_shipPos;
+
+    std::unique_ptr<ScrollingBackground> m_stars;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_backgroundTex;
 };

@@ -1,4 +1,4 @@
-//
+﻿//
 // Game.cpp
 //
 
@@ -58,6 +58,10 @@ void Game::Update(DX::StepTimer const& timer)
     float elapsedTime = float(timer.GetElapsedSeconds());
 
     // TODO: Add your game logic here.
+    // 추가된 내용
+    m_ship->Update(elapsedTime);
+    m_stars->Update(elapsedTime * 500);
+
     elapsedTime;
 }
 #pragma endregion
@@ -78,6 +82,16 @@ void Game::Render()
     auto context = m_deviceResources->GetD3DDeviceContext();
 
     // TODO: Add your rendering code here.
+    // 추가된 내용
+    m_spriteBatch->Begin();
+    
+    m_stars->Draw(m_spriteBatch.get());
+    m_ship->Draw(m_spriteBatch.get(), m_shipPos);
+
+    m_spriteBatch->End();
+
+    
+
     context;
 
     m_deviceResources->PIXEndEvent();
@@ -171,6 +185,21 @@ void Game::CreateDeviceDependentResources()
     m_graphicsMemory = std::make_unique<GraphicsMemory>(device);
     
     // TODO: Initialize device dependent objects here (independent of window size).
+    // 추가된 내용
+    auto context = m_deviceResources->GetD3DDeviceContext();
+    m_spriteBatch = std::make_unique<SpriteBatch>(context);
+
+    DX::ThrowIfFailed(CreateWICTextureFromFile(device, L"shipanimated.png",
+        nullptr, m_texture.ReleaseAndGetAddressOf()));
+
+    m_ship = std::make_unique<AnimatedTexture>();
+    m_ship->Load(m_texture.Get(), 4, 20);
+
+    DX::ThrowIfFailed(CreateWICTextureFromFile(device, L"starfield.png",
+        nullptr, m_backgroundTex.ReleaseAndGetAddressOf()));
+
+    m_stars = std::make_unique<ScrollingBackground>();
+    m_stars->Load(m_backgroundTex.Get());
     device;
 }
 
@@ -178,11 +207,23 @@ void Game::CreateDeviceDependentResources()
 void Game::CreateWindowSizeDependentResources()
 {
     // TODO: Initialize windows-size dependent objects here.
+    // 추가된 내용
+    auto size = m_deviceResources->GetOutputSize();
+    m_shipPos.x = float(size.right / 2);
+    m_shipPos.y = float((size.bottom / 2) + (size.bottom / 4));
+
+    m_stars->SetWindow(size.right, size.bottom);
 }
 
 void Game::OnDeviceLost()
 {
     // TODO: Add Direct3D resource cleanup here.
+    // 추가된 내용
+    m_ship.reset();
+    m_spriteBatch.reset();
+    m_texture.Reset();
+    m_stars.reset();
+    m_backgroundTex.Reset();
     m_graphicsMemory.reset();
 }
 
