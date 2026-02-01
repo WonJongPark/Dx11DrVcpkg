@@ -13,7 +13,7 @@
 #include <exception>
 #include <stdexcept>
 
-//#include "SpriteBatch.h"
+//#include "SpriteBatch.h" // DirectXTK을 미리 설치해 놔서 필요가 없다.
 
 #include <wrl/client.h>
 
