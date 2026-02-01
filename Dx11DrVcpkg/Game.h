@@ -6,8 +6,8 @@
 
 #include "DeviceResources.h"
 #include "StepTimer.h"
-#include "AnimatedTexture.h" // AnimatedTexture를 위해 필요
-#include "ScrollingBackground.h"
+#include "AnimatedTexture.h" // 게임 로직을 담당하는 객체
+#include "ScrollingBackground.h" // 게임 로직을 담당하는 객체
 
 #include <memory>
 
@@ -69,9 +69,9 @@ private:
     std::unique_ptr<DirectX::GraphicsMemory> m_graphicsMemory;
 
     // 추가된 내용
-    std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
+    std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch; // 복잡한 정점 버퍼(Vertex Buffer) 설정 없이 간편하게 2D이미지를 그리기 위한 DirectXTK 클래스
     std::unique_ptr<AnimatedTexture> m_ship;
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texture;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texture; // 텍스쳐 파일(.png)을 GPU가 읽을 수 있는 데이터(SRV)로 관리하는 변수.
     DirectX::SimpleMath::Vector2 m_shipPos;
 
     std::unique_ptr<ScrollingBackground> m_stars;
