@@ -78,7 +78,9 @@ void Game::Render()
     auto context = m_deviceResources->GetD3DDeviceContext();
 
     // TODO: Add your rendering code here.
-    std::wstring output = std::wstring(L"Hello") + std::wstring(L" World");
+    const char* ascii = "Hello World";
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    std::wstring output = converter.from_bytes(ascii);
 
     m_spriteBatch->Begin();
 
