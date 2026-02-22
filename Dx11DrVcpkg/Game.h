@@ -1,4 +1,4 @@
-//
+﻿//
 // Game.h
 //
 
@@ -65,4 +65,6 @@ private:
     
     // Xbox One XDK 를 사용하는 경우, 빡센 메모리 관리를 위해 필수.
     std::unique_ptr<DirectX::GraphicsMemory> m_graphicsMemory;
+
+    std::unique_ptr<DirectX::SpriteFont> m_font;
 };
