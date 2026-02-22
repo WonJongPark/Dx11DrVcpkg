@@ -67,4 +67,7 @@ private:
     std::unique_ptr<DirectX::GraphicsMemory> m_graphicsMemory;
 
     std::unique_ptr<DirectX::SpriteFont> m_font;
+
+    DirectX::SimpleMath::Vector2 m_fontPos;
+    std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
 };
