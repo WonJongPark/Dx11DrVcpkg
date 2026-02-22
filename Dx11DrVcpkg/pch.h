@@ -50,9 +50,6 @@
 #include <stdexcept>
 #include <system_error>
 #include <tuple>
-#include <string>
-#include <codecvt>
-#include <locale>
 
 #ifdef _DEBUG
 #include <dxgidebug.h>
