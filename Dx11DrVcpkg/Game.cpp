@@ -60,7 +60,7 @@ void Game::Update(DX::StepTimer const& timer)
     // TODO: Add your game logic here.
     // 추가된 내용
     m_ship->Update(elapsedTime);    // 애니메이션 프레임을 넘긴다.
-    m_stars->Update(elapsedTime * 500); // 배경일 이동.
+    m_stars->Update(elapsedTime * 500); // 배경을 이동.
 
     elapsedTime;
 }
