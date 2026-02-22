@@ -1,4 +1,4 @@
-//
+﻿//
 // pch.h
 // Header for standard system include files.
 //
@@ -50,6 +50,7 @@
 #include <stdexcept>
 #include <system_error>
 #include <tuple>
+#include <string>
 
 #ifdef _DEBUG
 #include <dxgidebug.h>
