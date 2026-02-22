@@ -84,10 +84,15 @@ void Game::Render()
 
     Vector2 origin = m_font->MeasureString(output) / 2.f;
 
+    // 윤곽효과 추가
     m_font->DrawString(m_spriteBatch.get(), output,
         m_fontPos + Vector2(1.f, 1.f), Colors::Black, 0.f, origin);
     m_font->DrawString(m_spriteBatch.get(), output,
         m_fontPos + Vector2(-1.f, 1.f), Colors::Black, 0.f, origin);
+    m_font->DrawString(m_spriteBatch.get(), output,
+        m_fontPos + Vector2(-1.f, -1.f), Colors::Black, 0.f, origin);
+    m_font->DrawString(m_spriteBatch.get(), output,
+        m_fontPos + Vector2(1.f, -1.f), Colors::Black, 0.f, origin);
 
     m_font->DrawString(m_spriteBatch.get(), output,
         m_fontPos, Colors::White, 0.f, origin);
